@@ -1,0 +1,45 @@
+name: Atualizar Temperaturas de Minas Gerais (Open-Meteo)
+
+on:
+  schedule:
+    # Executa a cada 5 minutos
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-temperatures-geojson
+  cancel-in-progress: false
+
+jobs:
+  scrape-and-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Executar coleta e atualizar GeoJSON de Minas Gerais
+        run: python3 scripts/update_temperatures.py
+
+      - name: Commit e Push do GeoJSON atualizado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/minas_gerais_municipios.geojson
+          if git diff --staged --quiet; then
+            echo "Nenhuma alteração nos dados do GeoJSON."
+          else
+            git commit -m "chore(data): atualizar temperaturas de Minas Gerais ($(date -u +'%Y-%m-%dT%H:%M:%SZ'))"
+            git push
+          fi

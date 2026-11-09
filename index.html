@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapa Coroplético de Temperaturas de Minas Gerais</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div id="map"></div>
+
+  <aside class="control-panel">
+    <header class="panel-header">
+      <div>
+        <h1>Temperaturas em Minas Gerais</h1>
+        <p class="subtitle">Malha IBGE Generalizada (853 municípios) &bull; Open-Meteo</p>
+      </div>
+      <button id="theme-toggle" class="theme-btn" type="button" title="Alternar tema Claro/Escuro"
+        aria-label="Alternar tema">
+        <span id="theme-icon">☀️</span>
+      </button>
+    </header>
+
+    <div class="control-group">
+      <label class="group-label">Métrica de Exibição</label>
+      <div class="metric-selector" role="radiogroup" aria-label="Métrica de Temperatura">
+        <button type="button" class="metric-btn active" data-metric="temp_atual">Atual</button>
+        <button type="button" class="metric-btn" data-metric="temp_min">Mínima</button>
+        <button type="button" class="metric-btn" data-metric="temp_max">Máxima</button>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="group-label">Visualização de Relevo (DEM)</label>
+      <div class="relief-controls">
+        <button type="button" id="relief-toggle" class="relief-btn active" aria-pressed="true">
+          <span class="relief-indicator"></span>
+          <span id="relief-label">Relevo Ativado (3D + Sombreado)</span>
+        </button>
+        <div id="exaggeration-group" class="exaggeration-control">
+          <div class="exaggeration-header">
+            <label for="relief-exaggeration">Exagero Vertical do Relevo</label>
+            <output id="relief-exaggeration-val" for="relief-exaggeration">2.2x</output>
+          </div>
+          <input type="range" id="relief-exaggeration" class="exaggeration-slider" min="0.5" max="6.0" step="0.1"
+            value="2.2" />
+          <div class="exaggeration-ticks">
+            <span>0.5x</span>
+            <span>2.0x</span>
+            <span>4.0x</span>
+            <span>6.0x</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label for="city-search" class="group-label">Buscar Município (853)</label>
+      <input type="search" id="city-search" class="search-input"
+        placeholder="Ex: Belo Horizonte, Uberlândia, Juiz de Fora..." autocomplete="off" />
+    </div>
+
+    <div class="legend-container">
+      <div class="legend-header">
+        <span id="legend-title">Temperatura Atual (°C)</span>
+      </div>
+      <div class="viridis-bar" aria-hidden="true"></div>
+      <div class="legend-labels">
+        <span id="legend-min">-- °C</span>
+        <span id="legend-mid1">-- °C</span>
+        <span id="legend-mid2">-- °C</span>
+        <span id="legend-max">-- °C</span>
+      </div>
+      <div class="legend-nodata">
+        <span class="nodata-swatch"></span>
+        <span>Sem dados disponíveis</span>
+      </div>
+    </div>
+
+    <div id="city-details" class="city-card hidden">
+      <h2 id="card-city-name">Selecione um município</h2>
+      <p class="card-ibge">Código IBGE: <span id="card-city-code">-</span> &bull; Coord: <span id="card-city-coords">-</span></p>
+      <div class="card-metrics">
+        <div class="metric-box">
+          <span class="m-label">Atual</span>
+          <strong id="card-temp-atual">-- °C</strong>
+        </div>
+        <div class="metric-box">
+          <span class="m-label">Mínima</span>
+          <strong id="card-temp-min">-- °C</strong>
+        </div>
+        <div class="metric-box">
+          <span class="m-label">Máxima</span>
+          <strong id="card-temp-max">-- °C</strong>
+        </div>
+      </div>
+    </div>
+
+    <footer class="panel-footer">
+      <div id="status-banner" class="status-banner">Carregando dados...</div>
+      <small id="last-updated">Última atualização: --</small>
+    </footer>
+  </aside>
+
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
